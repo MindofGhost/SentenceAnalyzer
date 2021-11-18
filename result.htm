@@ -1,0 +1,106 @@
+<div class="container-fluid">
+	<div class="row">
+		<div class="w-100 col-md-6 offset-md-3">
+			<div class='row pt-2'>
+				<form id="search" onsubmit="event.preventDefault();" class="col-md-12 form-inline">
+					<input id="number" class="form-control col-md-10" type="search" placeholder="Номер результата" onKeyPress="if (event.keyCode < 48 || event.keyCode > 57) event.returnValue=false;">
+					<button class="btn btn-outline-success my-2 my-sm-0 col-md-2" id="submit" type="submit">Найти</button>
+				</form>
+
+			</div>
+			<div id="output" style="display: none;">
+				<div id="outputText" class="col-md-12 border border-secondary bg-light rounded">
+					
+				</div>
+				<div class="form-check">
+					<input class="form-check-input" type="checkbox" value="подлежащее" id="subject">
+					<label class="form-check-label" for="subject">
+						Подлежащее
+					</label>
+				</div>			
+				<div class="form-check">
+					<input class="form-check-input" type="checkbox" value="сказуемое" id="predicate">
+					<label class="form-check-label" for="predicate">
+						Сказуемое
+					</label>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+ <script>
+if (/^#result[/](\d*$)/.test(window.location.hash)){
+	resultNUM=window.location.hash.match(/^#result[/](\d*$)/)[1];
+	$('#loader').hide();
+	$('#page').fadeIn();
+}else{
+	if(resultNUM!=undefined)window.location.hash='#result/'+resultNUM;
+	else{
+		$('#loader').hide();
+		$('#page').fadeIn();
+	}
+}
+var JSONdata;
+if (resultNUM!=undefined){
+	$.getJSON( "/"+resultNUM+".json", function(data) {
+		$( "#outputText" ).html('');
+		$('#input:checkbox').prop('checked', false);
+		$('#output').show();
+		$.each( data, function( key, val ) {
+			$( "#outputText" ).append('<div class="word">'+val.word+'</div>');
+		});
+		JSONdata=data;
+	})
+	.fail(function( jqxhr, textStatus, error ) {
+		$('#output').hide();
+		$("#warnDescription").html('Не удалось найти указанный результат.');
+			$("#warning").modal('toggle');
+		resultNUM=undefined;
+	});
+}
+$( "#submit" ).on( "click", function() {
+	if($( "#number" ).val().length>0) window.location.hash='#result/'+$( "#number" ).val();
+});
+$('#subject').on('click', function(){
+	if ($('#subject').is(':checked')){
+		$.each( JSONdata, function( key, val ) {
+		
+			if (val.role=='подлежащее'){
+				$( ".word" ).eq( key ).addClass('subject');
+				console.log(val.role);
+			}
+		})
+	} else {
+		$( ".word" ).removeClass('subject');
+	}
+});
+$('#predicate').on('click', function(){
+	if ($('#predicate').is(':checked')){
+		$.each( JSONdata, function( key, val ) {
+			
+			if (val.role=='сказуемое'){
+				$( ".word" ).eq( key ).addClass('predicate');
+				console.log(val.role);
+			}
+		})
+	} else {
+		$( ".word" ).removeClass('predicate');
+	}
+});
+
+
+</script>
+<style>
+.word {
+    display: inline-block;
+    margin: 2px 2px;
+}
+.subject {
+    background-color: yellow;
+}
+.predicate {
+    background-color: lime;
+}
+
+</style>
