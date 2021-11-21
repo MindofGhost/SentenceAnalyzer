@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.MediaType;
 import org.springframework.web.multipart.MultipartFile;
 import ru.maistudents.backendsentenceanalyzer.entities.Text;
+import ru.maistudents.backendsentenceanalyzer.exceptions.FileHasBadContentException;
 import ru.maistudents.backendsentenceanalyzer.exceptions.FileIsEmptyException;
 import ru.maistudents.backendsentenceanalyzer.exceptions.FileWrongFormatException;
 import ru.maistudents.backendsentenceanalyzer.exceptions.InputTextIsEmpty;
@@ -79,7 +80,7 @@ public class TextController {
             WordExtractor extractor = new WordExtractor(document);
             return  extractor.getText();
         } catch (IOException e) {
-            throw new RuntimeException("Bad content");
+            throw new FileHasBadContentException("Bad content");
         }
     }
 
@@ -87,7 +88,7 @@ public class TextController {
         try {
             return new String(file.getBytes(), StandardCharsets.UTF_8);
         } catch (IOException e) {
-            throw new RuntimeException("Bad content");
+            throw new FileHasBadContentException("Bad content");
         }
     }
 
@@ -101,7 +102,7 @@ public class TextController {
                 inputString = inputString.concat(para.getText()).concat(" ");
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new FileHasBadContentException("Bad content");
         }
         return inputString;
     }

@@ -24,6 +24,11 @@ public class BackendExceptionHandler {
         return new ResponseEntity<>(makeResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(FileHasBadContentException.class)
+    public ResponseEntity<ResponseDTO> handleFileHasBadContentException(FileHasBadContentException e) {
+        return new ResponseEntity<>(makeResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
+    }
+
     private ResponseDTO makeResponse(String message) {
         String responseMessage = String.format("%s %s", LocalDateTime.now(), message);
         return new ResponseDTO(responseMessage);
