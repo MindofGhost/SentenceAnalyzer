@@ -1,0 +1,12 @@
+services:
+  postgres_db:
+    container_name: postgres-database
+    image: postgres:13
+    ports:
+      - "5435:5432"
+    environment:
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=sentence_analyzer
+      - POSTGRES_PORT=5432
+    restart: always
