@@ -2,6 +2,7 @@ package ru.maistudents.backendsentenceanalyzer.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.maistudents.backendsentenceanalyzer.analyzer.RussianLuceneMorphology;
 import ru.maistudents.backendsentenceanalyzer.entities.Role;
 import ru.maistudents.backendsentenceanalyzer.entities.Text;
 import ru.maistudents.backendsentenceanalyzer.entities.Word;
@@ -9,8 +10,7 @@ import ru.maistudents.backendsentenceanalyzer.repositories.RoleRepository;
 import ru.maistudents.backendsentenceanalyzer.repositories.TextRepository;
 import ru.maistudents.backendsentenceanalyzer.repositories.WordRepository;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class TextService {
@@ -18,14 +18,17 @@ public class TextService {
     private final WordRepository wordRepository;
     private final TextRepository textRepository;
     private final RoleRepository roleRepository;
+    private final RussianLuceneMorphology russianLuceneMorphology;
 
     @Autowired
     public TextService(WordRepository wordRepository,
                        TextRepository textRepository,
-                       RoleRepository roleRepository) {
+                       RoleRepository roleRepository,
+                       RussianLuceneMorphology russianLuceneMorphology) {
         this.wordRepository = wordRepository;
         this.textRepository = textRepository;
         this.roleRepository = roleRepository;
+        this.russianLuceneMorphology = russianLuceneMorphology;
     }
 
     public Map<Integer, String> getOutputText(Text text) {
@@ -53,28 +56,47 @@ public class TextService {
         word.setParentText(text);
         word.setPosition(position);
         word.setValue(value);
-        word.setRole(generateRole());
+        word.setRole(generateRole(value));
         wordRepository.save(word);
     }
 
-    private Role generateRole() {
-        int roleNumber = (int) ( Math.random() * 4 );
-        return switchRole(roleNumber);
+    private Role generateRole(String value) {
+        value = value.toLowerCase(Locale.ROOT);
+        for (String word : russianLuceneMorphology.getMorphInfo(value)) {
+            if (word.split("\\|")[0].equals(value)) {
+                return switchRole(word.split(" ")[1]);
+            }
+        }
+        return switchRole(russianLuceneMorphology.getMorphInfo(value).get(0).split(" ")[1]);
     }
 
-    private Role switchRole(int number){
-        switch (number) {
-            case 0:
+    private Role switchRole(String lemma){
+        switch (lemma) {
+            // Существительное
+            case "С":
+            // Местоимение существительное
+            case "МС":
                 return roleRepository.findRoleByName("Подлежащее");
-            case 1:
+            // Глагол
+            case "Г":
+            case "ИНФИНИТИВ":
+            case "ПРЕДИКАТИВ":
                 return roleRepository.findRoleByName("Сказуемое");
-            case 2:
+            // Прилагательное
+            case "П":
+            case "ПРИЧАСТИЕ":
+            // числительное порядковое
+            case "ЧИСЛ-П":
                 return roleRepository.findRoleByName("Определение");
-            case 3:
+            case "ДЕЕПРИЧАСТИЕ":
+            // Наречие
+            case "Н":
+            // Местоименное прилагательное
+            case "МС-П":
                 return roleRepository.findRoleByName("Обстоятельство");
-            case 4:
+            case "ЧИСЛ":
+            default:
                 return roleRepository.findRoleByName("Дополнение");
         }
-        return null;
     }
 }
