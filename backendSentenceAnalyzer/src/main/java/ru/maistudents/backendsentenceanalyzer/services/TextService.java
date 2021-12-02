@@ -20,6 +20,7 @@ public class TextService {
     private final RoleRepository roleRepository;
     private final RussianLuceneMorphology russianLuceneMorphology;
 
+
     @Autowired
     public TextService(WordRepository wordRepository,
                        TextRepository textRepository,
@@ -29,6 +30,7 @@ public class TextService {
         this.textRepository = textRepository;
         this.roleRepository = roleRepository;
         this.russianLuceneMorphology = russianLuceneMorphology;
+
     }
 
     public Map<Integer, String> getOutputText(Text text) {
