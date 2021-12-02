@@ -5,10 +5,7 @@ import org.apache.poi.hwpf.extractor.WordExtractor;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.http.MediaType;
 import org.springframework.web.multipart.MultipartFile;
 import ru.maistudents.backendsentenceanalyzer.entities.Text;
@@ -44,7 +41,7 @@ public class TextController {
 
         return textService.getOutputText(text);
     }
-
+    @CrossOrigin
     @PostMapping("/file")
     public Map<String, String> analyzeInputFile(@RequestParam("file") MultipartFile file) {
         if (file.isEmpty()) {
