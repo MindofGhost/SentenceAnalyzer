@@ -31,10 +31,10 @@ public class TextService {
         this.russianLuceneMorphology = russianLuceneMorphology;
     }
 
-    public Map<Integer, String> getOutputText(Text text) {
-        Map<Integer, String> integerRoleMap = new HashMap<>();
+    public Map<String, String> getOutputText(Text text) {
+        Map<String, String> integerRoleMap = new LinkedHashMap<>();
         for(Word word: wordRepository.findAllByParentTextOrderByPosition(text)) {
-            integerRoleMap.put(word.getPosition(), word.getRole().getName());
+            integerRoleMap.put(word.getValue(), word.getRole().getName());
         }
         return integerRoleMap;
     }

@@ -34,7 +34,7 @@ public class TextController {
     }
 
     @PostMapping(value = "/text", consumes = {MediaType.TEXT_PLAIN_VALUE})
-    public Map<Integer, String> analyzeInputText(@RequestBody String inputString) {
+    public Map<String, String> analyzeInputText(@RequestBody String inputString) {
         if (inputString.isEmpty()) {
             throw new InputTextIsEmpty("Input text is empty");
         }
@@ -46,7 +46,7 @@ public class TextController {
     }
 
     @PostMapping("/file")
-    public Map<Integer, String> analyzeInputFile(@RequestParam("file") MultipartFile file) {
+    public Map<String, String> analyzeInputFile(@RequestParam("file") MultipartFile file) {
         if (file.isEmpty()) {
             throw new FileIsEmptyException("Input file is empty");
         }
