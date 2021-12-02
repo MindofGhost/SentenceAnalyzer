@@ -12,7 +12,9 @@
 				<div id="outputText" class="col-md-12 border border-secondary bg-light rounded">
 					
 				</div>
-				<div class="form-check">
+				<div id="outputTypes"></div>
+				
+				<!--<div class="form-check">
 					<input class="form-check-input" type="checkbox" value="подлежащее" id="subject">
 					<label class="form-check-label" for="subject">
 						Подлежащее
@@ -23,7 +25,7 @@
 					<label class="form-check-label" for="predicate">
 						Сказуемое
 					</label>
-				</div>
+				</div>-->
 			</div>
 		</div>
 	</div>
@@ -43,7 +45,33 @@ if (/^#result[/](\d*$)/.test(window.location.hash)){
 }
 var JSONdata;
 if (resultNUM!=undefined){
-	$.getJSON( "/"+resultNUM+".json", function(data) {
+    console.log(docText)
+    $( "#outputText" ).html('');
+    $('#output').show();
+    
+    let checkboxArr = []
+    let wordArr = docText.split(' ');
+    
+    for(let word in responseAnaliz)
+    {
+        $( "#outputText" ).append('<div class="word">'+word+'</div>');
+    }
+    
+//     for(let i = 0; i<wordArr.length; i++) {
+//         $( "#outputText" ).append('<div class="word">'+wordArr[i]+'</div>');
+//         console.log(checkboxArr.length)
+//         $( "#outputTypes" ).html('');
+//     for(let j = 0; j < checkboxArr.length; j++) {
+//         console.log("appendCB")
+//         
+//         $( "outputTypes" ).append('<div class="form-check">' + checkboxArr[j] + '</div>');
+//          $( "#outputTypes" ).append('<div class="form-check"><input class="form-check-input" type="checkbox" value=' + checkboxArr[j] + '><label class="form-check-label" for="subject">' + checkboxArr[j] + '</label></div>');
+//     }
+    
+    
+    
+    //$( "#outputText" ).append('<div class="word">'+docText+'</div>');
+	/*$.getJSON( "/"+resultNUM+".json", function(data) {
 		$( "#outputText" ).html('');
 		$('#input:checkbox').prop('checked', false);
 		$('#output').show();
@@ -57,7 +85,7 @@ if (resultNUM!=undefined){
 		$("#warnDescription").html('Не удалось найти указанный результат.');
 			$("#warning").modal('toggle');
 		resultNUM=undefined;
-	});
+	});*/	
 }
 $( "#submit" ).on( "click", function() {
 	if($( "#number" ).val().length>0) window.location.hash='#result/'+$( "#number" ).val();
@@ -89,7 +117,7 @@ $('#predicate').on('click', function(){
 	}
 });
 
-
+console.log("responseAnaliz ->", responseAnaliz)
 </script>
 <style>
 .word {
