@@ -30,6 +30,7 @@ public class TextController {
         this.textService = textService;
     }
 
+    @CrossOrigin
     @PostMapping(value = "/text", consumes = {MediaType.TEXT_PLAIN_VALUE})
     public Map<String, String> analyzeInputText(@RequestBody String inputString) {
         if (inputString.isEmpty()) {
