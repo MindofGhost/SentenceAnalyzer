@@ -14,18 +14,36 @@
 				</div>
 				<div id="outputTypes"></div>
 				
-				<!--<div class="form-check">
-					<input class="form-check-input" type="checkbox" value="подлежащее" id="subject">
+				<div class="form-check">
+					<input class="form-check-input" type="checkbox" value="Подлежащее" id="subject">
 					<label class="form-check-label" for="subject">
 						Подлежащее
 					</label>
 				</div>			
 				<div class="form-check">
-					<input class="form-check-input" type="checkbox" value="сказуемое" id="predicate">
+					<input class="form-check-input" type="checkbox" value="Сказуемое" id="predicate">
 					<label class="form-check-label" for="predicate">
 						Сказуемое
 					</label>
-				</div>-->
+				</div>
+				<div class="form-check">
+					<input class="form-check-input" type="checkbox" value="Определение" id="predicate">
+					<label class="form-check-label" for="predicate">
+						Определение
+					</label>
+				</div>
+				<div class="form-check">
+					<input class="form-check-input" type="checkbox" value="Обстоятельство" id="predicate">
+					<label class="form-check-label" for="predicate">
+						Обстоятельство
+					</label>
+				</div>
+				<div class="form-check">
+					<input class="form-check-input" type="checkbox" value="Дополнение" id="predicate">
+					<label class="form-check-label" for="predicate">
+						Дополнение
+					</label>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -92,26 +110,42 @@ $( "#submit" ).on( "click", function() {
 });
 $('#subject').on('click', function(){
 	if ($('#subject').is(':checked')){
-		$.each( JSONdata, function( key, val ) {
+		/*$.each( JSONdata, function( key, val ) {
 		
 			if (val.role=='подлежащее'){
 				$( ".word" ).eq( key ).addClass('subject');
 				console.log(val.role);
 			}
-		})
+		})*/
+		let i = 0;
+		for(let word in responseAnaliz) {
+			if (responseAnaliz[word]=='Подлежащее'){
+				$( ".word" ).eq( i ).addClass('subject');
+				console.log(word, responseAnaliz[word]);
+			}
+			i++;
+		}
 	} else {
 		$( ".word" ).removeClass('subject');
 	}
 });
 $('#predicate').on('click', function(){
 	if ($('#predicate').is(':checked')){
-		$.each( JSONdata, function( key, val ) {
+		/*$.each( JSONdata, function( key, val ) {
 			
-			if (val.role=='сказуемое'){
+			if (val.role=='Cказуемое'){
 				$( ".word" ).eq( key ).addClass('predicate');
 				console.log(val.role);
 			}
-		})
+		})*/
+		let i = 0;
+		for(let word in responseAnaliz) {
+			if (responseAnaliz[word]=='Сказуемое'){
+				$( ".word" ).eq( i ).addClass('predicate');
+				console.log(word, responseAnaliz[word]);
+			}
+			i++;
+		}
 	} else {
 		$( ".word" ).removeClass('predicate');
 	}
