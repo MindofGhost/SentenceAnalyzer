@@ -61,10 +61,10 @@ var rolesDict = {
 
 function markWords(role) {
 	let i = 0;
-	for(let word in responseAnaliz) {
-		if (responseAnaliz[word]==rolesDict[role]){
+	for(let i in responseAnaliz) {
+		if (responseAnaliz[i].role==rolesDict[role]){
 			$( ".word" ).eq( i ).addClass(role);
-			console.log(word, responseAnaliz[word]);
+			console.log("word", responseAnaliz[i].role, responseAnaliz[i].word);
 		}
 		i++;
 	}
@@ -92,9 +92,9 @@ if (resultNUM!=undefined){
     let checkboxArr = []
     let wordArr = docText.split(' ');
     
-    for(let word in responseAnaliz)
+    for(let i in responseAnaliz)
     {
-        $( "#outputText" ).append('<div class="word">'+word+'</div>');
+        $( "#outputText" ).append('<div class="word">'+responseAnaliz[i].word+'</div>');
     }	
 }
 $( "#submit" ).on( "click", function() {

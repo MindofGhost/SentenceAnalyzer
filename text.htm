@@ -61,8 +61,9 @@ async function showFile(input) {
     .then(response => response.json())
     .then(result => {
 		let txt = ""
-				for(let word in result) {
-					txt += word + " "				
+		console.log(result)
+				for(let i in result) {
+					txt += result[i].word + " "				
 				}
 				document.getElementById("text").value = txt
 				document.getElementById("text").disabled = true;
