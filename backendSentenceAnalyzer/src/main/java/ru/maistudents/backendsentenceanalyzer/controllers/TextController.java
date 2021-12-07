@@ -5,12 +5,10 @@ import org.apache.poi.hwpf.extractor.WordExtractor;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.http.MediaType;
 import org.springframework.web.multipart.MultipartFile;
+import ru.maistudents.backendsentenceanalyzer.dto.OutputWordDTO;
 import ru.maistudents.backendsentenceanalyzer.entities.Text;
 import ru.maistudents.backendsentenceanalyzer.exceptions.FileHasBadContentException;
 import ru.maistudents.backendsentenceanalyzer.exceptions.FileIsEmptyException;
@@ -33,8 +31,9 @@ public class TextController {
         this.textService = textService;
     }
 
+    @CrossOrigin
     @PostMapping(value = "/text", consumes = {MediaType.TEXT_PLAIN_VALUE})
-    public Map<Integer, String> analyzeInputText(@RequestBody String inputString) {
+    public List<OutputWordDTO> analyzeInputText(@RequestBody String inputString) {
         if (inputString.isEmpty()) {
             throw new InputTextIsEmpty("Input text is empty");
         }
@@ -44,9 +43,9 @@ public class TextController {
 
         return textService.getOutputText(text);
     }
-
+    @CrossOrigin
     @PostMapping("/file")
-    public Map<Integer, String> analyzeInputFile(@RequestParam("file") MultipartFile file) {
+    public List<OutputWordDTO> analyzeInputFile(@RequestParam("file") MultipartFile file) {
         if (file.isEmpty()) {
             throw new FileIsEmptyException("Input file is empty");
         }
