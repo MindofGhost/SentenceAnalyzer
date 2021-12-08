@@ -5,13 +5,13 @@
 				<h1 class="h3 mb-3 mt-3 font-weight-normal text-center">Введите данные или загрузите файл DOCX</h1>
 				<div class="form-group">
 					<label for="text" class="sr-only">Текст для анализа</label>
-					<textarea class="form-control" id="text" rows="5" disabled></textarea>
+					<textarea class="form-control" id="text" rows="5"></textarea>
 				</div>
 				<div class="form-group">
 					<label for="file">Загрузка файла</label>
-					<input type="file" class="form-control-file" id="file">
+					<input type="file" class="form-control-file" id="file" onchange="showFile(this)">
 				</div>
-				<button class="btn btn-lg btn-primary btn-block" type="submit">Анализ</button>
+				<button class="btn btn-lg btn-primary btn-block" type="submit" onclick="sendToSrv()">Анализ</button>
 			</form>
 			<div id="analyzing" class="d-none">
 				<div class="mt-4 row">
@@ -30,19 +30,89 @@
 </div>
 
  <script>
- var valeur = 0;
+ var valueur = 0;
+ let responseAnaliz = {}
+ let docText = ""
  function test(){
-	valeur++;
-	$('.progress-bar').css('width', valeur+'%').attr('aria-valuenow', valeur);
-	if (valeur<100) setTimeout(test, 100)
+	valueur++;
+	$('.progress-bar').css('width', valueur+'%').attr('aria-valuenow', valueur);
+	if (valueur<100) setTimeout(test, 100)
 	else $('#getResult').prop("href", "#result/1").removeClass("disabled btn-secondary").addClass("btn-primary").prop("aria-disabled", false);
 }
 $('#loader').hide();
 $('#page').fadeIn('slow');
-$('#text').val('Летом мы жили у деда. Мы помогали деду сушить сеть. Дедушка учил нас чинить сети. Я работал с дедом.');
+$('#text').val('');
 $( "form:first" ).submit(function( event ) {
 	event.preventDefault();
 	$( "#analyzing" ).fadeIn().removeClass( "d-none" );
 	test();
 });
+
+async function showFile(input) {
+	var formdata = new FormData();
+    formdata.append("file", document.getElementById("file").files[0], document.getElementById("file").files[0].filename);
+    
+    var requestOptions = {
+    	method: 'POST',
+    	body: formdata
+    };
+
+    await fetch("http://localhost:8080/file", requestOptions)
+    .then(response => response.json())
+    .then(result => {
+		let txt = ""
+		console.log(result)
+				for(let i in result) {
+					txt += result[i].word + " "				
+				}
+				document.getElementById("text").value = txt
+				document.getElementById("text").disabled = true;
+            })
+    .catch(error => console.log('error', error));  
+}
+
+async function sendToSrv() {
+    let formdata = new FormData();
+	let file = document.getElementById("file").files[0];
+	
+
+	console.log("file", document.getElementById("file").files[0]);
+	if(!!file) {
+			
+			formdata.append("file", file, file.filename);
+			let requestOptions = {
+				method: 'POST',
+				body: formdata
+			};
+			await fetch("http://localhost:8080/file", requestOptions)
+			.then(response => response.json())
+			.then(result => {
+						responseAnaliz = result
+						console.log('result', result)
+						valueur = 100;
+					})
+			.catch(error => console.log('error', error));
+		}
+		else {
+			let myHeaders = new Headers();
+			myHeaders.append("Content-Type", "text/plain");
+			console.log("file", document.getElementById("text").value);
+			let requestOptions = {
+				method: 'POST',
+				headers: myHeaders,
+				body: document.getElementById("text").value
+			};	
+			await fetch("http://localhost:8080/text", requestOptions)
+			.then(response => response.json())
+			.then(result => {
+						responseAnaliz = result
+						console.log('result', result)
+						valueur = 100;
+					})
+			.catch(error => console.log('error', error));
+		}
+    
+
+}
+console.log("responseAnaliz", responseAnaliz)
 </script>

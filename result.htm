@@ -12,16 +12,36 @@
 				<div id="outputText" class="col-md-12 border border-secondary bg-light rounded">
 					
 				</div>
+				<div id="outputTypes"></div>
+				
 				<div class="form-check">
-					<input class="form-check-input" type="checkbox" value="подлежащее" id="subject">
-					<label class="form-check-label" for="subject">
+					<input class="form-check-input" type="checkbox" value="Подлежащее" id="subject">
+					<label class="form-check-label subject" for="subject">
 						Подлежащее
 					</label>
 				</div>			
 				<div class="form-check">
-					<input class="form-check-input" type="checkbox" value="сказуемое" id="predicate">
-					<label class="form-check-label" for="predicate">
+					<input class="form-check-input" type="checkbox" value="Сказуемое" id="predicate">
+					<label class="form-check-label predicate" for="predicate">
 						Сказуемое
+					</label>
+				</div>
+				<div class="form-check">
+					<input class="form-check-input" type="checkbox" value="Определение" id="definition">
+					<label class="form-check-label definition" for="definition">
+						Определение
+					</label>
+				</div>
+				<div class="form-check">
+					<input class="form-check-input" type="checkbox" value="Обстоятельство" id="condition">
+					<label class="form-check-label condition" for="condition">
+						Обстоятельство
+					</label>
+				</div>
+				<div class="form-check">
+					<input class="form-check-input" type="checkbox" value="Дополнение" id="addition">
+					<label class="form-check-label addition" for="addition">
+						Дополнение
 					</label>
 				</div>
 			</div>
@@ -30,6 +50,28 @@
 </div>
 
  <script>
+
+var rolesDict = {
+	"subject" : "Подлежащее",
+	"predicate" : "Сказуемое",
+	"definition" : "Определение",
+	"condition" : "Обстоятельство",
+	"addition" : "Дополнение"
+}
+
+function markWords(role) {
+	let i = 0;
+	for(let i in responseAnaliz) {
+		if (responseAnaliz[i].role==rolesDict[role]){
+			$( ".word" ).eq( i ).addClass(role);
+			console.log("word", responseAnaliz[i].role, responseAnaliz[i].word);
+		}
+		i++;
+	}
+}
+
+
+
 if (/^#result[/](\d*$)/.test(window.location.hash)){
 	resultNUM=window.location.hash.match(/^#result[/](\d*$)/)[1];
 	$('#loader').hide();
@@ -43,53 +85,62 @@ if (/^#result[/](\d*$)/.test(window.location.hash)){
 }
 var JSONdata;
 if (resultNUM!=undefined){
-	$.getJSON( "/"+resultNUM+".json", function(data) {
-		$( "#outputText" ).html('');
-		$('#input:checkbox').prop('checked', false);
-		$('#output').show();
-		$.each( data, function( key, val ) {
-			$( "#outputText" ).append('<div class="word">'+val.word+'</div>');
-		});
-		JSONdata=data;
-	})
-	.fail(function( jqxhr, textStatus, error ) {
-		$('#output').hide();
-		$("#warnDescription").html('Не удалось найти указанный результат.');
-			$("#warning").modal('toggle');
-		resultNUM=undefined;
-	});
+    console.log(docText)
+    $( "#outputText" ).html('');
+    $('#output').show();
+    
+    let checkboxArr = []
+    let wordArr = docText.split(' ');
+    
+    for(let i in responseAnaliz)
+    {
+        $( "#outputText" ).append('<div class="word">'+responseAnaliz[i].word+'</div>');
+    }	
 }
 $( "#submit" ).on( "click", function() {
 	if($( "#number" ).val().length>0) window.location.hash='#result/'+$( "#number" ).val();
 });
 $('#subject').on('click', function(){
 	if ($('#subject').is(':checked')){
-		$.each( JSONdata, function( key, val ) {
-		
-			if (val.role=='подлежащее'){
-				$( ".word" ).eq( key ).addClass('subject');
-				console.log(val.role);
-			}
-		})
+		markWords("subject");
 	} else {
 		$( ".word" ).removeClass('subject');
 	}
 });
+
 $('#predicate').on('click', function(){
 	if ($('#predicate').is(':checked')){
-		$.each( JSONdata, function( key, val ) {
-			
-			if (val.role=='сказуемое'){
-				$( ".word" ).eq( key ).addClass('predicate');
-				console.log(val.role);
-			}
-		})
+		markWords("predicate");
 	} else {
 		$( ".word" ).removeClass('predicate');
 	}
 });
 
+$('#definition').on('click', function(){
+	if ($('#definition').is(':checked')){
+		markWords("definition");
+	} else {
+		$( ".word" ).removeClass('definition');
+	}
+});
 
+$('#condition').on('click', function(){
+	if ($('#condition').is(':checked')){
+		markWords("condition");
+	} else {
+		$( ".word" ).removeClass('condition');
+	}
+});
+
+$('#addition').on('click', function(){
+	if ($('#addition').is(':checked')){
+		markWords("addition");
+	} else {
+		$( ".word" ).removeClass('addition');
+	}
+});
+
+console.log("responseAnaliz ->", responseAnaliz)
 </script>
 <style>
 .word {
@@ -101,6 +152,15 @@ $('#predicate').on('click', function(){
 }
 .predicate {
     background-color: lime;
+}
+.definition {
+    background-color: cyan;
+}
+.condition {
+    background-color: gray;
+}
+.addition {
+    background-color: pink;
 }
 
 </style>
