@@ -71,7 +71,7 @@ public class TextService {
         if (value.charAt(0) == '\"'
                 || value.charAt(0) == '\''
                 || value.charAt(0) == '«') {
-            delimiters = "[\"'«]";
+            delimiters = "[\"'«»]";
             valueWithoutPunctuationMark = value.toLowerCase(Locale.ROOT).split(delimiters)[1];
         }
 
